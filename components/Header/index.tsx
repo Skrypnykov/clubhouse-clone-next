@@ -1,11 +1,11 @@
 import React from 'react';
-import clsx from 'clsx';
-import Link from 'next/link';
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 
-import { Avatar } from '../Avatar';
-
+import clsx from 'clsx';
 import styles from './Header.module.scss';
+
+import { Avatar } from '@/components';
 
 //import { selectUserData } from '../../redux/selectors';
 

@@ -17,7 +17,7 @@ export const EnterCodeStep: React.FC = () => {
   const nextDisabled = codes.some((v) => !v); //якщо якогось значення немає, то кнопка неактивна
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const index = Number(event.target.getAttribute('id')) - 1;
+    const index = Number(event.target.getAttribute('id'));
     const value = event.target.value;
     setCodes(() => {
       const newArr = [...codes];
@@ -52,38 +52,17 @@ export const EnterCodeStep: React.FC = () => {
           <StepInfo icon="/static/numbers.png" title="Enter your activate code" />
           <WhiteBlock className={clsx('m-auto mt-30', styles.whiteBlock)}>
             <div className={clsx('mb-30', styles.codeInput)}>
-              <input
-                type="tel"
-                placeholder="X"
-                maxLength={1}
-                id="1"
-                onChange={handleChangeInput}
-                value={codes[0]}
-              />
-              <input
-                type="tel"
-                placeholder="X"
-                maxLength={1}
-                id="2"
-                onChange={handleChangeInput}
-                value={codes[1]}
-              />
-              <input
-                type="tel"
-                placeholder="X"
-                maxLength={1}
-                id="3"
-                onChange={handleChangeInput}
-                value={codes[2]}
-              />
-              <input
-                type="tel"
-                placeholder="X"
-                maxLength={1}
-                id="4"
-                onChange={handleChangeInput}
-                value={codes[3]}
-              />
+              {codes.map((code, index) => (
+                <input
+                  key={index}
+                  type="tel"
+                  placeholder="X"
+                  maxLength={1}
+                  id={String(index)}
+                  onChange={handleChangeInput}
+                  value={code}
+                />
+              ))}
             </div>
             <Button onClick={onSumbit} disabled={nextDisabled}>
               Next

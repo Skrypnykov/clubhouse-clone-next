@@ -1,37 +1,15 @@
-import React, { useState } from 'react';
-import { Header } from '../components/Header';
-import { Button } from '../components/Button';
-//import { ConversationCard } from '../components/ConversationCard';
+import React from 'react';
+import { Header, Button, ConversationCard, StartRoomModal } from '@/components';
+
 import Link from 'next/link';
-import Head from 'next/head';
-//import { checkAuth } from '../utils/checkAuth';
-//import { StartRoomModal } from '../components/StartRoomModal';
-//import { Api } from '../api';
-import { useDispatch, useSelector } from 'react-redux';
-//import { selectRooms } from '../redux/selectors';
-//import { wrapper } from '../redux/store';
-//import { setRooms, setRoomSpeakers } from '../redux/slices/roomsSlice';
-//import { useSocket } from '../hooks/useSocket';
+import Axios from '../core/axios';
 
-const Rooms = () => {
-  const [visibleModal, setVisibleModal] = useState(false);
-  // const rooms = useSelector(selectRooms);
-  // const dispatch = useDispatch();
-  // const socket = useSocket();
-
-  // React.useEffect(() => {
-  //   socket.on('SERVER@ROOMS:HOME', ({ roomId, speakers }) => {
-  //     dispatch(setRoomSpeakers({ speakers, roomId }));
-  //   });
-  // }, []);
+export default function RoomsPage({ rooms = [] }) {
+  const [visibleModal, setVisibleModal] = React.useState(false);
 
   return (
     <>
-      <Head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-        <title>Clubhouse: Drop-in audio chat</title>
-      </Head>
-      <Header/>
+      <Header />
       <div className="container">
         <div className="mt-40 d-flex align-items-center justify-content-between">
           <h1>All conversations</h1>
@@ -39,8 +17,7 @@ const Rooms = () => {
             onClick={() => {
               setVisibleModal(true);
             }}
-            color="green"
-          >
+            color="green">
             + Start room
           </Button>
         </div>
@@ -51,54 +28,37 @@ const Rooms = () => {
             }}
           />
         )}
-        <div className="grid mt-30">
-          {/* {rooms.map((obj) => (
-            <Link href={`/rooms/${obj.id}`} key={obj.id}>
-              <a className="d-flex">
-                <ConversationCard
-                  title={obj.title}
-                  speakers={obj.speakers}
-                  listenersCount={obj.listenersCount}
-                />
-              </a>
+        <div className="grid mt-30 mb-40">
+          {rooms.map((obj) => (
+            <Link key={obj.id} href={`/rooms/${obj.id}`}>
+              <ConversationCard
+                title={obj.title}
+                avatars={obj.avatars}
+                guests={obj.guests}
+                guestsCount={obj.guestsCount}
+                speakersCount={obj.speakersCount}
+              />
             </Link>
-          ))} */}
+          ))}
         </div>
       </div>
     </>
   );
 };
 
-// export const getServerSideProps =
-//   wrapper.getServerSideProps(async (ctx) => {
-//     try {
-//       const user = await checkAuth(ctx);
-
-//       if (!user) {
-//         return {
-//           props: {},
-//           redirect: {
-//             permanent: false,
-//             destination: '/',
-//           },
-//         };
-//       }
-
-//       const rooms = await Api(ctx).getRooms();
-
-//       ctx.store.dispatch(setRooms(rooms));
-
-//       return {
-//         props: {},
-//       };
-//     } catch (error) {
-//       console.log('ERROR', error);
-//       return {
-//         props: {
-//           rooms: [],
-//         },
-//       };
-//     }
-//   });
-
-export default Rooms;
+// запускається на стороні сервера
+export const getServerSideProps = async () => {
+  try {
+    const { data } = await Axios.get('/rooms.json');
+    return {
+      props: {
+        rooms: data,
+      },
+    };
+  } catch (error) {
+    console.log('ERROR!');
+    return {
+      props: {},
+    };
+  }
+};

@@ -16,6 +16,16 @@ const stepsComponents = {
   5: EnterCodeStep,
 };
 
+export type UserData = {
+  id: number;
+  fullname: string;
+  avatarUrl: string;
+  isActive: number;
+  username: string;
+  phone: string;
+  token?: string;
+};
+
 type MainContextProps = {
   onNextStep: () => void;
   step: number;
@@ -28,7 +38,7 @@ export default function Home() {
   const [step, setStep] = React.useState<number>(0);
   const Step = stepsComponents[step];
 
-  //  const [userData, setUserData] = React.useState();
+  const [userData, setUserData] = React.useState();
 
   const onNextStep = () => {
     setStep((prev) => prev + 1);

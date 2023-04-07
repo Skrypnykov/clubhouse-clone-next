@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { Profile } from '../../components/Profile';
-import { Header } from '../../components/Header';
+
+import { Header, Profile } from '@/components';
 
 export default function ProfilePage() {
   const router = useRouter();
