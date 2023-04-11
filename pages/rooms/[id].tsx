@@ -14,7 +14,7 @@ export default function RoomPage({ room }) {
       <div className="container mt-40">
         <BackButton title="All rooms" href="/rooms" />
       </div>
-      <Room title={room.title} />
+      <Room title={room.title} avatars={room.avatars} guests={room.guests} />
     </>
   );
 }

@@ -22,8 +22,8 @@ export const StartRoomModal: React.FC<StartRoomModalProps> = ({ onClose }) => {
     if (!title) {
       return alert('Укажите заголовок комнаты');
     }
-    const data: Room = await createRoom({ title, type });
-    router.push(`/rooms/${data.id}`);
+    // const data: Room = await createRoom({ title, type });
+    // router.push(`/rooms/${data.id}`);
   };
 
   return (

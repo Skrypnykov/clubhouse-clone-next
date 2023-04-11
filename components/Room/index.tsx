@@ -2,16 +2,18 @@ import React from 'react';
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import { Button } from '@/components';
+import { Button, Speaker, SpeakerProps } from '@/components';
 
 import styles from './Room.module.scss';
 
 
 interface RoomProps {
   title: string;
+  avatars: string;
+  guests: string;
 }
 
-export const Room: React.FC<RoomProps> = ({ title }) => {
+export const Room: React.FC<RoomProps> = ({ title, avatars, guests }) => {
 
   return (
     <div className={styles.wrapper}>
@@ -28,13 +30,24 @@ export const Room: React.FC<RoomProps> = ({ title }) => {
         </div>
       </div>
 
-      <div className="users">
-        {/* 
-        {users.map((obj) => (
-          <Speaker key={obj.fullname} {...obj} />
-        ))} */}
+      <div className={styles.users}>
+        <div className={styles.speakers}>
+          {/* 
+          {users.map((obj) => (
+            <Speaker key={obj.fullname} {...obj} />
+          ))} */}
 
-        Speeker
+          {
+            avatars.map((arr, i) => (<img key={i} src={arr} alt="speaker" />))
+          }
+        </div>
+        <hr />
+        <div className={styles.guests}>
+
+          {
+            guests.map((guests, i) => (<span key={i}>{guests}</span>))
+          }
+        </div>
       </div>
     </div>
   );

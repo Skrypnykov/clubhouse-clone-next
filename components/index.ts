@@ -5,6 +5,7 @@ export * from './ConversationCard';
 export * from './Header';
 export * from './Profile';
 export * from './Room';
+export * from './Speaker';
 export * from './StartRoomModal';
 export * from './StepInfo';
 export * from './WhiteBlock';

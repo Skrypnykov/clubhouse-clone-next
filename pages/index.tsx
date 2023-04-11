@@ -1,7 +1,7 @@
 import React from "react";
 
 import { WelcomeStep } from "../components/steps/WelcomeStep";
-import { TwitterStep } from '../components/steps/TwitterStep';
+import { GitHubStep } from '../components/steps/GitHubStep';
 import { EnterNameStep } from '../components/steps/EnterNameStep';
 import { ChooseAvatarStep } from '../components/steps/ChooseAvatarStep';
 import { EnterPhoneStep } from '../components/steps/EnterPhoneStep';
@@ -9,8 +9,8 @@ import { EnterCodeStep } from '../components/steps/EnterCodeStep';
 
 const stepsComponents = {
   0: WelcomeStep,
-  1: EnterNameStep,
-  2: TwitterStep,
+  1: GitHubStep,
+  2: EnterNameStep,
   3: ChooseAvatarStep,
   4: EnterPhoneStep,
   5: EnterCodeStep,
