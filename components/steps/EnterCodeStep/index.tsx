@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { WhiteBlock } from '../../WhiteBlock';
 import { Button } from '../../Button';
 import { StepInfo } from '../../StepInfo';
-import Axios from '../../../core/axios';
+import { Axios } from '@/core/axios';
 
 import styles from './EnterPhoneStep.module.scss';
 

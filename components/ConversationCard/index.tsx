@@ -1,11 +1,10 @@
 import React from 'react';
-import { Avatar } from '@/components';
-
 import clsx from 'clsx';
 import styles from './ConversationCard.module.scss';
 import whiteBlockStyles from '../WhiteBlock/WhiteBlock.module.scss';
 
-import { UserData } from '../../pages';
+import { Avatar } from '@/components';
+import { UserData } from '@/pages';
 
 interface ConversationCard {
   title: string;

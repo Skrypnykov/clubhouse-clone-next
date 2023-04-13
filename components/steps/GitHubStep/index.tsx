@@ -1,15 +1,15 @@
 import React from 'react';
 import clsx from 'clsx';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import { WhiteBlock } from '../../WhiteBlock';
 import { Button } from '../../Button';
 import { StepInfo } from '../../StepInfo';
 
 import styles from './GitHubStep.module.scss';
-import { MainContext } from '@/pages';
+import { MainContext, UserData } from '@/pages';
 
 export const GitHubStep: React.FC = () => {
-  const { onNextStep } = React.useContext(MainContext);
+  const { onNextStep, setUserData } = React.useContext(MainContext);
 
   const onClickAuth = () => {
     const win = window.open(
@@ -23,13 +23,19 @@ export const GitHubStep: React.FC = () => {
         clearInterval(timer);
         onNextStep();
       }
-    }, 300);
-
+    }, 300);  
   };
 
   React.useEffect(() => {
-    window.addEventListener('message', ({ data }) => {
-      console.log(data);
+    window.addEventListener('message', ({ data, origin }) => {
+      const user: string = data;
+      if (typeof user === 'string' && user.includes('avatarUrl')) {
+        // Cookies.remove('token');
+        const json: UserData = JSON.parse(user);
+        setUserData(json);
+        // Cookies.set('token', json.token);
+      }
+   
     });
   }, []);
 

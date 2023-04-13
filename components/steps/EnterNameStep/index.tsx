@@ -8,9 +8,8 @@ import styles from './EnterNameStep.module.scss';
 import { MainContext } from '@/pages';
 
 export const EnterNameStep: React.FC = () => {
-  const [inputValue, setInputValue] = React.useState<string>('');
-  const { onNextStep } = React.useContext(MainContext);
-
+  const { onNextStep, userData, setFieldValue } = React.useContext(MainContext);
+  const [inputValue, setInputValue] = React.useState<string>(userData.fullname);
   const nextDisabled = !inputValue;
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,9 +17,10 @@ export const EnterNameStep: React.FC = () => {
   };
 
   const onClickNextStep = () => {
+    setFieldValue('fullname', inputValue);
     onNextStep();
   };
-
+  
   return (
     <div className={styles.block}>
       <StepInfo

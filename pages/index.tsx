@@ -1,11 +1,13 @@
 import React from "react";
 
-import { WelcomeStep } from "../components/steps/WelcomeStep";
-import { GitHubStep } from '../components/steps/GitHubStep';
-import { EnterNameStep } from '../components/steps/EnterNameStep';
-import { ChooseAvatarStep } from '../components/steps/ChooseAvatarStep';
-import { EnterPhoneStep } from '../components/steps/EnterPhoneStep';
-import { EnterCodeStep } from '../components/steps/EnterCodeStep';
+import {
+  WelcomeStep,
+  GitHubStep,
+  EnterNameStep,
+  ChooseAvatarStep,
+  EnterPhoneStep,
+  EnterCodeStep,
+} from "@/components/steps";
 
 const stepsComponents = {
   0: WelcomeStep,
@@ -28,21 +30,34 @@ export type UserData = {
 
 type MainContextProps = {
   onNextStep: () => void;
+  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+  setFieldValue: (field: keyof UserData, value: string) => void;
   step: number;
+  userData?: UserData;
 };
 
-export const MainContext = React.createContext<MainContextProps>({} as MainContextProps);
+export const MainContext = React.createContext<MainContextProps>(
+  {} as MainContextProps
+);
 
-export default function Home() {
-
+export default function HomePage() {
   const [step, setStep] = React.useState<number>(0);
+  const [userData, setUserData] = React.useState<UserData>();
   const Step = stepsComponents[step];
-
-  const [userData, setUserData] = React.useState();
 
   const onNextStep = () => {
     setStep((prev) => prev + 1);
-  }
+  };
+
+  // змінює поле в input-e 
+  const setFieldValue = (field: string, value: string) => {
+    setUserData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  console.log(userData);
 
   return (
     <main>
@@ -55,7 +70,7 @@ export default function Home() {
           }
         `}
       </style>
-      <MainContext.Provider value={{ step, onNextStep }}>
+      <MainContext.Provider value={{ step, onNextStep, userData, setUserData, setFieldValue }}>
         <Step />
       </MainContext.Provider>
     </main>

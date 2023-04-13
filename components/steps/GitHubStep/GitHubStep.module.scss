@@ -25,15 +25,8 @@
   width: 460px;
 }
 
-.twitterLogo {
-  display: inline-block;
-  position: relative;
-  top: 1px;
-  margin-right: 6px;
-}
-
 .button {
-  background-color: #24292e;
+  background-color: #24292f;
 
   &:hover {
     background-color: lighten(#24292e, 10);

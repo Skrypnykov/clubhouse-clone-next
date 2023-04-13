@@ -1,8 +1,8 @@
 import React from 'react';
-import { Header, Button, ConversationCard, StartRoomModal } from '@/components';
-
 import Link from 'next/link';
-import Axios from '../core/axios';
+
+import { Axios } from '@/core/axios';
+import { Header, Button, ConversationCard, StartRoomModal } from '@/components';
 
 export default function RoomsPage({ rooms = [] }) {
   const [visibleModal, setVisibleModal] = React.useState(false);
@@ -49,7 +49,7 @@ export default function RoomsPage({ rooms = [] }) {
 // запускається на стороні сервера
 export const getServerSideProps = async () => {
   try {
-    const { data } = await Axios.get('/rooms.json');
+    const { data } = await Axios.get('http://localhost:3000/rooms.json');
     return {
       props: {
         rooms: data,

@@ -1,25 +1,42 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 import clsx from "clsx";
-import { WhiteBlock } from "../../WhiteBlock";
-import { Button } from "../../Button";
-import { StepInfo } from "../../StepInfo";
-import { Avatar } from "../../Avatar";
 
 import styles from "./ChooseAvatarStep.module.scss";
+import { Avatar, Button, StepInfo, WhiteBlock  } from "@/components";
 import { MainContext } from "@/pages";
+import { Axios } from "@/core/axios";
+
+const uploadFile = async (file: File): Promise<{ url: string }> => {
+  const formData = new FormData();
+  formData.append('photo', file);
+
+  const { data } = await Axios({
+    method: 'POST',
+    url: '/upload',
+    data: formData,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+
+  return data;
+};
 
 export const ChooseAvatarStep: React.FC = () => {
-  const { onNextStep } = React.useContext(MainContext);
+  const { onNextStep, userData, setFieldValue } = React.useContext(MainContext);
 
-  const [avatarUrl, setAvatarUrl] = React.useState<string>('http://localhost:3000/static/avatar-so.jpg',);
+  const [avatarUrl, setAvatarUrl] = React.useState<string>(userData.avatarUrl);
   const inputFileRef = React.useRef<HTMLInputElement>(null);
 
   // зміна зображення
-  const handleChangeImage = (event: Event): void => {
-    const file = (event.target as HTMLInputElement).files[0];
+  const handleChangeImage = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);             // отримання посилання на файл
+      const imageUrl = URL.createObjectURL(file);
       setAvatarUrl(imageUrl);
+      const data = await uploadFile(file);
+      target.value = '';
+      setAvatarUrl(data.url);
+      setFieldValue('avatarUrl', data.url);
     }
   };
 
@@ -33,7 +50,7 @@ export const ChooseAvatarStep: React.FC = () => {
     <div className={styles.block}>
       <StepInfo
         icon="/static/celebration.png"
-        title="Okay, Skrypnykov Oleh!"
+        title={`Okay, ${userData?.fullname}!`}
         description="How’s this photo?"
       />
       <WhiteBlock className={clsx("m-auto mt-40", styles.whiteBlock)}>

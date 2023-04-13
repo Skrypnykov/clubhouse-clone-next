@@ -1,6 +1,7 @@
-import Link from 'next/link';
 import React from 'react';
-import { Avatar } from '../Avatar';
+import Link from 'next/link';
+
+import { Avatar } from '@/components';
 
 export type SpeakerProps = {
   id: string;

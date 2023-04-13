@@ -1,8 +1,8 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import { Axios } from '@/core/axios';
 
 import { Header, BackButton, Room } from '@/components';
-import Axios from '../../core/axios';
 
 export default function RoomPage({ room }) {
   const router = useRouter();
@@ -22,9 +22,9 @@ export default function RoomPage({ room }) {
 // запускається на стороні сервера
 export const getServerSideProps = async (context) => {
   try {
-    const { data } = await Axios.get('/rooms.json');
+    const { data } = await Axios.get('http://localhost:3000/rooms.json');
     const roomId = context.query.id;
-    const room = data.find((obj) => obj.id === roomId );
+    const room = data.find((obj) => obj.id === roomId);
     return {
       props: {
         room,
