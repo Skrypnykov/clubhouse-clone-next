@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-// import Cookies from 'js-cookie';
+import Cookies from 'js-cookie';
 import { WhiteBlock } from '../../WhiteBlock';
 import { Button } from '../../Button';
 import { StepInfo } from '../../StepInfo';
@@ -30,10 +30,11 @@ export const GitHubStep: React.FC = () => {
     window.addEventListener('message', ({ data, origin }) => {
       const user: string = data;
       if (typeof user === 'string' && user.includes('avatarUrl')) {
-        // Cookies.remove('token');
+        Cookies.remove('token');
         const json: UserData = JSON.parse(user);
         setUserData(json);
-        // Cookies.set('token', json.token);
+        
+        Cookies.set('token', json.token);
       }
    
     });

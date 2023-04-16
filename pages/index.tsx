@@ -42,7 +42,7 @@ export const MainContext = React.createContext<MainContextProps>(
 
 export default function HomePage() {
   const [step, setStep] = React.useState<number>(0);
-  const [userData, setUserData] = React.useState<UserData>();
+  const [userData, setUserData] = React.useState<UserData>({} as UserData);
   const Step = stepsComponents[step];
 
   const onNextStep = () => {

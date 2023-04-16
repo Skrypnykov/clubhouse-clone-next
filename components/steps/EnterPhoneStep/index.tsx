@@ -14,14 +14,11 @@ type InputValueState = {
 }
 
 export const EnterPhoneStep: React.FC = () => {
-  const { onNextStep } = React.useContext(MainContext);
+  const { onNextStep, setFieldValue } = React.useContext(MainContext);
   const [inputValue, setInputValue] = React.useState<InputValueState>({} as InputValueState);
   const nextDisabled = !inputValue.formattedValue || inputValue.formattedValue.includes('_');
 
   
-  
-  
-
   return (
     <div className={styles.block}>
       <StepInfo
