@@ -1,6 +1,8 @@
 import React from "react";
 import { Axios } from "@/core/axios";
 
+import { checkAuth } from "@/utils/checkAuth";
+
 import {
   WelcomeStep,
   GitHubStep,
@@ -50,20 +52,21 @@ const getUserData = (): UserData | null => {
 };
 
 const getFormStep = (): number => {
-  // const json = getUserData();
-  // if (json) {
-  //   if (json.phone) {
-  //     return 5;
-  //   } else {
-  //     return 4;
-  //   }
-  // }
+  const json = getUserData();
+  console.log(json);
+  if (json) {
+    if (json.phone) {
+      return 5;
+    } else {
+      return 4;
+    }
+  }
   return 0;
 };
 
 export default function HomePage() {
   const [step, setStep] = React.useState<number>(0);
-  const [userData, setUserData] = React.useState<UserData>({} as UserData);
+  const [userData, setUserData] = React.useState<UserData>();
   const Step = stepsComponents[step];
 
   const onNextStep = () => {
@@ -79,13 +82,6 @@ export default function HomePage() {
   };
 
   React.useEffect(() => {
-    if (userData) {
-      window.localStorage.setItem('userData', JSON.stringify(userData));
-      Axios.defaults.headers.Authorization = 'Bearer ' + userData.token;
-    }
-  }, [userData]);
-
-  React.useEffect(() => {
     if (typeof window !== 'undefined') {
       const json = getUserData();
       if (json) {
@@ -94,6 +90,13 @@ export default function HomePage() {
       }
     }
   }, []);
+
+  React.useEffect(() => {
+    if (userData) {
+      window.localStorage.setItem('userData', JSON.stringify(userData));
+      Axios.defaults.headers.Authorization = 'Bearer ' + userData.token;
+    }
+  }, [userData]);
 
   return (
     <main>
@@ -112,3 +115,22 @@ export default function HomePage() {
     </main>
   );
 }
+
+
+export const getServerSideProps = async (ctx) => {
+  try {
+    const user = await checkAuth(ctx);
+
+    if (user) {
+      return {
+        props: {},
+        redirect: {
+          destination: '/rooms',
+          permanent: false,
+        },
+      };
+    }
+  } catch (err) {}
+
+  return { props: {} };
+};

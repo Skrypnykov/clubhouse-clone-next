@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { Axios } from '@/core/axios';
 import { Header, Button, ConversationCard, StartRoomModal } from '@/components';
+import { checkAuth } from '../utils/checkAuth';
 
 export default function RoomsPage({ rooms = [] }) {
   const [visibleModal, setVisibleModal] = React.useState(false);
@@ -47,18 +48,33 @@ export default function RoomsPage({ rooms = [] }) {
 };
 
 // запускається на стороні сервера
-export const getServerSideProps = async () => {
+export const getServerSideProps = async (ctx) => {
   try {
+    const user = await checkAuth(ctx);
+
+    if (!user) {
+      return {
+        props: {},
+        redirect: {
+          permanent: false,
+          destination: '/',
+        },
+      };
+    }
+    
     const { data } = await Axios.get('http://localhost:3000/rooms.json');
     return {
       props: {
+        user,
         rooms: data,
       },
     };
   } catch (error) {
     console.log('ERROR!');
     return {
-      props: {},
+      props: {
+        rooms: [],
+      },
     };
   }
 };
