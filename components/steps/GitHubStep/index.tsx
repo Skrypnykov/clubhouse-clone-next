@@ -33,7 +33,6 @@ export const GitHubStep: React.FC = () => {
         Cookies.remove('token');
         const json: UserData = JSON.parse(user);
         setUserData(json);
-        
         Cookies.set('token', json.token);
       }
    
@@ -43,7 +42,7 @@ export const GitHubStep: React.FC = () => {
   return (
     <div className={styles.block}>
       <StepInfo icon="/static/connect.png" title="Do you want import info from GitHub?" />
-      <WhiteBlock className={clsx('m-auto mt-40', styles.whiteBlock)}>
+      <WhiteBlock className={clsx('m-auto mt-40 mb-50', styles.whiteBlock)}>
         <Button
           onClick={onClickAuth}
           className={clsx(styles.button, 'd-i-flex align-items-center')}>

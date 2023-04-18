@@ -1,4 +1,5 @@
 import React from "react";
+import { Axios } from "@/core/axios";
 
 import {
   WelcomeStep,
@@ -40,6 +41,26 @@ export const MainContext = React.createContext<MainContextProps>(
   {} as MainContextProps
 );
 
+const getUserData = (): UserData | null => {
+  try {
+    return JSON.parse(window.localStorage.getItem('userData'));
+  } catch (error) {
+    return null;
+  }
+};
+
+const getFormStep = (): number => {
+  // const json = getUserData();
+  // if (json) {
+  //   if (json.phone) {
+  //     return 5;
+  //   } else {
+  //     return 4;
+  //   }
+  // }
+  return 0;
+};
+
 export default function HomePage() {
   const [step, setStep] = React.useState<number>(0);
   const [userData, setUserData] = React.useState<UserData>({} as UserData);
@@ -57,7 +78,22 @@ export default function HomePage() {
     }));
   };
 
-  console.log(userData);
+  React.useEffect(() => {
+    if (userData) {
+      window.localStorage.setItem('userData', JSON.stringify(userData));
+      Axios.defaults.headers.Authorization = 'Bearer ' + userData.token;
+    }
+  }, [userData]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const json = getUserData();
+      if (json) {
+        setUserData(json);
+        setStep(getFormStep());
+      }
+    }
+  }, []);
 
   return (
     <main>

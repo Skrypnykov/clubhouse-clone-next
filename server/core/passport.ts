@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy as GithubStrategy } from "passport-github";
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
 
-import { createJwtToken } from "../utils/createJwtToken";
+import { createJwtToken } from "../../utils/createJwtToken";
 import { UserData } from "../../pages";
 import { User } from "../../models";
 

@@ -2,7 +2,7 @@ import React from "react";
 import clsx from "clsx";
 
 import styles from "./ChooseAvatarStep.module.scss";
-import { Avatar, Button, StepInfo, WhiteBlock  } from "@/components";
+import { Avatar, Button, StepInfo, WhiteBlock } from "@/components";
 import { MainContext } from "@/pages";
 import { Axios } from "@/core/axios";
 
@@ -21,6 +21,8 @@ const uploadFile = async (file: File): Promise<{ url: string }> => {
 
 export const ChooseAvatarStep: React.FC = () => {
   const { onNextStep, userData, setFieldValue } = React.useContext(MainContext);
+
+  const avatarLetters = userData.fullname.split(' ').map((s) => s[0]).join('');
 
   const [avatarUrl, setAvatarUrl] = React.useState<string>(userData.avatarUrl);
   const inputFileRef = React.useRef<HTMLInputElement>(null);
@@ -52,9 +54,9 @@ export const ChooseAvatarStep: React.FC = () => {
         title={`Okay, ${userData?.fullname}!`}
         description="How’s this photo?"
       />
-      <WhiteBlock className={clsx("m-auto mt-40", styles.whiteBlock)}>
+      <WhiteBlock className={clsx("m-auto mt-30", styles.whiteBlock)}>
         <div className={styles.avatar}>
-          <Avatar width="120px" height="120px" src={avatarUrl} />
+          <Avatar width="120px" height="120px" src={avatarUrl} letters={avatarLetters} />
         </div>
         <div className="mb-30">
           <label htmlFor="image" className="link cup">

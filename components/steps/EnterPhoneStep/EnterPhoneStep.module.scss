@@ -9,10 +9,19 @@
 
 .input {
   position: relative;
+  
   img {
     position: absolute;
     top: 24px;
-    left: 53px;
+    left: 45px;
+  }
+  :nth-child(2) {
+    left: 73px;
+    opacity: .5;
+  }
+
+  ::placeholder {
+    color: rgba(0, 0, 0, 0.3);
   }
 
   input {

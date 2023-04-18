@@ -28,7 +28,7 @@ export const EnterNameStep: React.FC = () => {
         title="What’s your full name?"
         description="People use real names on Clubhouse :) Thnx!"
       />
-      <WhiteBlock className={clsx('m-auto', styles.whiteBlock)}>
+      <WhiteBlock className={clsx('m-auto mt-30', styles.whiteBlock)}>
         <div className="mt-30 mb-30">
           <input
             onChange={handleChangeInput}
