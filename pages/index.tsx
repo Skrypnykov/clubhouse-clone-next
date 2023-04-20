@@ -2,6 +2,7 @@ import React from "react";
 import { Axios } from "@/core/axios";
 
 import { checkAuth } from "@/utils/checkAuth";
+import { Api } from "@/api";
 
 import {
   WelcomeStep,
@@ -11,6 +12,7 @@ import {
   EnterPhoneStep,
   EnterCodeStep,
 } from "@/components/steps";
+
 
 const stepsComponents = {
   0: WelcomeStep,

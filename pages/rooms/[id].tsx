@@ -3,6 +3,8 @@ import { useRouter } from 'next/router';
 import { Axios } from '@/core/axios';
 
 import { Header, BackButton, Room } from '@/components';
+import { Api } from '../../api';
+import { checkAuth } from '../../utils/checkAuth';
 
 export default function RoomPage({ room }) {
   const router = useRouter();
@@ -20,11 +22,22 @@ export default function RoomPage({ room }) {
 }
 
 // запускається на стороні сервера
-export const getServerSideProps = async (context) => {
+export const getServerSideProps = async (ctx) => {
   try {
-    const { data } = await Axios.get('http://localhost:3000/rooms.json');
-    const roomId = context.query.id;
-    const room = data.find((obj) => obj.id === roomId);
+    const user = await checkAuth(ctx);
+    if (!user) {
+      return {
+        props: {},
+        redirect: {
+          permanent: false,
+          destination: '/',
+        },
+      };
+    }
+
+    const roomId = ctx.query.id;
+    const room = await Api(ctx).getRoom(roomId as string);
+
     return {
       props: {
         room,
@@ -34,6 +47,10 @@ export const getServerSideProps = async (context) => {
     console.log('ERROR!');
     return {
       props: {},
+      redirect: {
+        destination: "/rooms",
+        permanent: false,
+      }
     };
   }
 };

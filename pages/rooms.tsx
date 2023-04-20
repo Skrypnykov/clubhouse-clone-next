@@ -1,13 +1,20 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
-import { Axios } from '@/core/axios';
-import { Header, Button, ConversationCard, StartRoomModal } from '@/components';
-import { checkAuth } from '../utils/checkAuth';
+import { Header, Button, ConversationCard, StartRoomModal } from "@/components";
+import { checkAuth } from "../utils/checkAuth";
+import { Api } from "../api";
+import { Room } from "../api/RoomApi";
+import { GetServerSideProps, NextPage } from "next";
 
-export default function RoomsPage({ rooms = [] }) {
+interface RoomsPageProps {
+  rooms: Room[];
+}
+
+const RoomsPage: NextPage<RoomsPageProps> = ({ rooms }) => {
   const [visibleModal, setVisibleModal] = React.useState(false);
-
+  
   return (
     <>
       <Header />
@@ -15,17 +22,19 @@ export default function RoomsPage({ rooms = [] }) {
         <div className="mt-40 d-flex align-items-center justify-content-between">
           <h1>All conversations</h1>
           <Button
+            className="pl-25"
             onClick={() => {
               setVisibleModal(true);
             }}
-            color="green">
+            color="green"
+          >
             + Start room
           </Button>
         </div>
         {visibleModal && (
           <StartRoomModal
             onClose={() => {
-              setVisibleModal(true);
+              setVisibleModal(false);
             }}
           />
         )}
@@ -33,12 +42,10 @@ export default function RoomsPage({ rooms = [] }) {
           {rooms.map((obj) => (
             <Link key={obj.id} href={`/rooms/${obj.id}`}>
               <ConversationCard
-                title={obj.title}
-                avatars={obj.avatars}
-                guests={obj.guests}
-                guestsCount={obj.guestsCount}
-                speakersCount={obj.speakersCount}
-              />
+                  title={obj.title}
+                  speakers={obj.speakers}
+                  listenersCount={obj.listenersCount}
+                />
             </Link>
           ))}
         </div>
@@ -48,7 +55,9 @@ export default function RoomsPage({ rooms = [] }) {
 };
 
 // запускається на стороні сервера
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<RoomsPageProps> = async (
+  ctx
+) => {
   try {
     const user = await checkAuth(ctx);
 
@@ -57,20 +66,22 @@ export const getServerSideProps = async (ctx) => {
         props: {},
         redirect: {
           permanent: false,
-          destination: '/',
+          destination: "/",
         },
       };
     }
-    
-    const { data } = await Axios.get('http://localhost:3000/rooms.json');
+
+    const rooms = await Api(ctx).getRooms();
+    //ctx.store.dispatch(setRooms(rooms));
+
     return {
       props: {
         user,
-        rooms: data,
+        rooms,
       },
     };
   } catch (error) {
-    console.log('ERROR!');
+    console.log("ERROR!");
     return {
       props: {
         rooms: [],
@@ -78,3 +89,5 @@ export const getServerSideProps = async (ctx) => {
     };
   }
 };
+
+export default RoomsPage;

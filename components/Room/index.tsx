@@ -9,11 +9,9 @@ import styles from './Room.module.scss';
 
 interface RoomProps {
   title: string;
-  avatars: string;
-  guests: string;
 }
 
-export const Room: React.FC<RoomProps> = ({ title, avatars, guests }) => {
+export const Room: React.FC<RoomProps> = ({ title }) => {
 
   return (
     <div className={styles.wrapper}>
@@ -37,16 +35,16 @@ export const Room: React.FC<RoomProps> = ({ title, avatars, guests }) => {
             <Speaker key={obj.fullname} {...obj} />
           ))} */}
 
-          {
+          {/* {
             avatars.map((arr, i) => (<img key={i} src={arr} alt="speaker" />))
-          }
+          } */}
         </div>
         <hr />
         <div className={styles.guests}>
 
-          {
+          {/* {
             guests.map((guests, i) => (<span key={i}>{guests}</span>))
-          }
+          } */}
         </div>
       </div>
     </div>

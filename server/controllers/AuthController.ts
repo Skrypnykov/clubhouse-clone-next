@@ -36,7 +36,7 @@ class AuthController {
             });
 
             if (findCode) {
-                await Code.destroy({                            // видалення коду из бази після активації
+                await Code.destroy({    // видалення коду из бази після активації
                     where: whereQuery,
                 });
                 await User.update({ isActive: 1 }, { where: { id: userId } });  // активація користувача
@@ -49,6 +49,29 @@ class AuthController {
         } catch (error) {
             res.status(500).json({
                 message: "Помилка активації облікового запису",
+            });
+        }
+    }
+
+    // 
+    async getUserInfo(req: express.Request, res: express.Response) {
+        const userId = req.params.id;
+
+        try {
+            const findUser = await User.findByPk(userId);
+            console.log(findUser, userId);
+
+            if (findUser) {
+                res.json(await findUser);
+            } else {
+                res.status(400).json({
+                    message: 'Користувач не знайдений',
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                message: 'Помилка отримання інформації про користувача',
             });
         }
     }
@@ -94,6 +117,8 @@ class AuthController {
             });
         }
     }
+
+
 }
 
 export default new AuthController();
