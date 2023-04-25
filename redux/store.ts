@@ -1,4 +1,4 @@
-import { combineReducers, configureStore, Store } from '@reduxjs/toolkit';
+import { AnyAction, combineReducers, configureStore, Store } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
 import { roomsReducer } from './slices/roomsSlice';
 import { userReducer } from './slices/userSlice';
@@ -9,7 +9,7 @@ export const rootReducer = combineReducers({
   user: userReducer,
 });
 
-export const makeStore = (): Store<RootState> =>
+export const makeStore = (): Store<RootState, AnyAction> =>
   configureStore({
     reducer: rootReducer,
   });

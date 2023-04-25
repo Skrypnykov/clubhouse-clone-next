@@ -22,7 +22,7 @@ export const fetchCreateRoom = createAsyncThunk<Room, { title: string; type: Roo
       });
       return room;
     } catch (error) {
-      throw Error('Ошибка при создании комнаты');
+      throw Error('Помилка під час створення кімнати');
     }
   },
 );

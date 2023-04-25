@@ -23,11 +23,11 @@ export const GitHubStep: React.FC = () => {
         clearInterval(timer);
         onNextStep();
       }
-    }, 300);  
+    }, 300);
   };
 
   React.useEffect(() => {
-    window.addEventListener('message', ({ data, origin }) => {
+    window.addEventListener('message', ({ data }) => {
       const user: string = data;
       if (typeof user === 'string' && user.includes('avatarUrl')) {
         Cookies.remove('token');
@@ -35,7 +35,6 @@ export const GitHubStep: React.FC = () => {
         setUserData(json);
         Cookies.set('token', json.token);
       }
-   
     });
   }, []);
 

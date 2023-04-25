@@ -1,8 +1,8 @@
 import React from "react";
-import { Axios } from "@/core/axios";
-
-import { checkAuth } from "@/utils/checkAuth";
-import { Api } from "@/api";
+import { GetServerSideProps } from "next";
+import { Axios } from "../core/axios";
+import { checkAuth } from "../utils/checkAuth";
+import { wrapper } from "../redux/store";
 
 import {
   WelcomeStep,
@@ -12,7 +12,6 @@ import {
   EnterPhoneStep,
   EnterCodeStep,
 } from "@/components/steps";
-
 
 const stepsComponents = {
   0: WelcomeStep,
@@ -118,8 +117,8 @@ export default function HomePage() {
   );
 }
 
-
-export const getServerSideProps = async (ctx) => {
+// запускається на стороні сервера
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (ctx) => {
   try {
     const user = await checkAuth(ctx);
 
@@ -132,7 +131,8 @@ export const getServerSideProps = async (ctx) => {
         },
       };
     }
-  } catch (err) {}
+    
+  } catch (err) { }
 
   return { props: {} };
-};
+});

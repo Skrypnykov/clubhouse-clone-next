@@ -12,11 +12,11 @@ import styles from './EnterCodeStep.module.scss';
 
 export const EnterCodeStep: React.FC = () => {
   const router = useRouter();
-  const { userData } = React.useContext(MainContext);
+  //const { userData } = React.useContext(MainContext);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [codes, setCodes] = React.useState(['', '', '', '']);
 
-  const nextDisabled = codes.some((e) => !e); //якщо якогось значення немає, то кнопка неактивна
+  // const nextDisabled = codes.some((e) => !e); //якщо якогось значення немає, то кнопка неактивна
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const index = Number(event.target.getAttribute('id'));
@@ -64,10 +64,6 @@ export const EnterCodeStep: React.FC = () => {
                 />
               ))}
             </div>
-            {/* <Button onClick={onSubmit} disabled={nextDisabled}>
-              Next
-              <img className="d-ib ml-10" src="/static/arrow.svg" />
-            </Button> */}
           </WhiteBlock>
         </>
       ) : (

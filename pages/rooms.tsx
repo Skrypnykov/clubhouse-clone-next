@@ -1,19 +1,26 @@
 import React from "react";
+import { GetServerSideProps, NextPage } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Header, Button, ConversationCard, StartRoomModal } from "@/components";
 import { checkAuth } from "../utils/checkAuth";
 import { Api } from "../api";
 import { Room } from "../api/RoomApi";
-import { GetServerSideProps, NextPage } from "next";
 
-interface RoomsPageProps {
-  rooms: Room[];
-}
+import { wrapper } from "../redux/store";
+import { setRooms } from "../redux/slices/roomsSlice";
+import { selectRooms } from "@/redux/selectors";
 
-const RoomsPage: NextPage<RoomsPageProps> = ({ rooms }) => {
+// interface RoomsPageProps {
+//   rooms: Room[];
+// }
+
+const RoomsPage: NextPage = () => {
   const [visibleModal, setVisibleModal] = React.useState(false);
+  const rooms = useSelector(selectRooms);
+  // const dispatch = useDispatch();
   
   return (
     <>
@@ -55,12 +62,10 @@ const RoomsPage: NextPage<RoomsPageProps> = ({ rooms }) => {
 };
 
 // запускається на стороні сервера
-export const getServerSideProps: GetServerSideProps<RoomsPageProps> = async (
-  ctx
-) => {
+export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (ctx) => {
   try {
     const user = await checkAuth(ctx);
-
+   
     if (!user) {
       return {
         props: {},
@@ -72,8 +77,8 @@ export const getServerSideProps: GetServerSideProps<RoomsPageProps> = async (
     }
 
     const rooms = await Api(ctx).getRooms();
-    //ctx.store.dispatch(setRooms(rooms));
-
+    store.dispatch(setRooms(rooms));
+    
     return {
       props: {
         user,
@@ -88,6 +93,6 @@ export const getServerSideProps: GetServerSideProps<RoomsPageProps> = async (
       },
     };
   }
-};
+});
 
 export default RoomsPage;
