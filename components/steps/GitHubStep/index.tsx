@@ -1,12 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
 import Cookies from 'js-cookie';
-import { WhiteBlock } from '../../WhiteBlock';
-import { Button } from '../../Button';
-import { StepInfo } from '../../StepInfo';
-
+import { WhiteBlock, Button, StepInfo } from '../../../components';
+import { MainContext, UserData } from '../../../pages';
 import styles from './GitHubStep.module.scss';
-import { MainContext, UserData } from '@/pages';
 
 export const GitHubStep: React.FC = () => {
   const { onNextStep, setUserData } = React.useContext(MainContext);

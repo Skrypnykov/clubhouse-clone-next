@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 import { PatternFormat } from 'react-number-format';
-import { WhiteBlock } from '../../WhiteBlock';
-import { Button } from '../../Button';
-import { StepInfo } from '../../StepInfo';
+
+import { WhiteBlock, Button, StepInfo } from '../../../components';
+import { MainContext } from '../../../pages';
+import { Axios } from '../../../core/axios';
 
 import styles from './EnterPhoneStep.module.scss';
-import { MainContext } from '@/pages';
-import { Axios } from '@/core/axios';
+
 
 type InputValueState = {
   formattedValue: string;

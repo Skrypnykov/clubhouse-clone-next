@@ -2,9 +2,9 @@ import React from "react";
 import clsx from "clsx";
 
 import styles from "./ChooseAvatarStep.module.scss";
-import { Avatar, Button, StepInfo, WhiteBlock } from "@/components";
-import { MainContext } from "@/pages";
-import { Axios } from "@/core/axios";
+import { Avatar, Button, StepInfo, WhiteBlock } from "../../../components";
+import { MainContext } from "../../../pages";
+import { Axios } from "../../../core/axios";
 
 const uploadFile = async (file: File): Promise<{ url: string }> => {
   const formData = new FormData();

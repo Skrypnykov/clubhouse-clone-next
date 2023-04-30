@@ -1,7 +1,7 @@
-import React from 'react';
-import clsx from 'clsx';
+import React from "react";
+import clsx from "clsx";
 
-import styles from './Avatar.module.scss';
+import styles from "./Avatar.module.scss";
 
 interface AvatarProps {
   src: string;
@@ -12,7 +12,14 @@ interface AvatarProps {
   letters?: string;
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ src, width, height, className, isVoice, letters }) => {
+export const Avatar: React.FC<AvatarProps> = ({
+  src,
+  width,
+  height,
+  className,
+  isVoice,
+  letters,
+}) => {
   return (
     <div
       style={{ width, height, backgroundImage: src ? `url(${src})` : '' }}

@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import { UserData } from '../../pages';
+import { UserData } from '../pages';
 
 export const createJwtToken = (user: UserData): string => {
   const token = jwt.sign(

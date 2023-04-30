@@ -1,27 +1,28 @@
 import React from "react";
-import { GetServerSideProps, NextPage } from "next";
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
+import { ParsedUrlQuery } from "node:querystring";
+import { AnyAction, Store } from "@reduxjs/toolkit";
+import { useSelector } from "react-redux";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useDispatch, useSelector } from "react-redux";
 
-import { Header, Button, ConversationCard, StartRoomModal } from "@/components";
+import {
+  Header,
+  Button,
+  ConversationCard,
+  StartRoomModal,
+} from "../components";
+
 import { checkAuth } from "../utils/checkAuth";
 import { Api } from "../api";
-import { Room } from "../api/RoomApi";
-
 import { wrapper } from "../redux/store";
+import { RootState } from "../redux/types";
 import { setRooms } from "../redux/slices/roomsSlice";
-import { selectRooms } from "@/redux/selectors";
-
-// interface RoomsPageProps {
-//   rooms: Room[];
-// }
+import { selectRooms } from "../redux/selectors";
 
 const RoomsPage: NextPage = () => {
   const [visibleModal, setVisibleModal] = React.useState(false);
   const rooms = useSelector(selectRooms);
-  // const dispatch = useDispatch();
-  
+
   return (
     <>
       <Header />
@@ -47,12 +48,12 @@ const RoomsPage: NextPage = () => {
         )}
         <div className="grid mt-30 mb-40">
           {rooms.map((obj) => (
-            <Link key={obj.id} href={`/rooms/${obj.id}`}>
+            <Link key={obj.id} href={`/room/${obj.id}`}>
               <ConversationCard
-                  title={obj.title}
-                  speakers={obj.speakers}
-                  listenersCount={obj.listenersCount}
-                />
+                title={obj.title}
+                speakers={obj.speakers}
+                listenersCount={obj.listenersCount}
+              />
             </Link>
           ))}
         </div>
@@ -61,38 +62,42 @@ const RoomsPage: NextPage = () => {
   );
 };
 
-// запускається на стороні сервера
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (ctx) => {
-  try {
-    const user = await checkAuth(ctx);
-   
-    if (!user) {
-      return {
-        props: {},
-        redirect: {
-          permanent: false,
-          destination: "/",
-        },
-      };
-    }
-
-    const rooms = await Api(ctx).getRooms();
-    store.dispatch(setRooms(rooms));
-    
-    return {
-      props: {
-        user,
-        rooms,
-      },
-    };
-  } catch (error) {
-    console.log("ERROR!");
-    return {
-      props: {
-        rooms: [],
-      },
-    };
-  }
-});
-
 export default RoomsPage;
+
+// запускається на стороні сервера
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    async (
+      ctx: GetServerSidePropsContext<ParsedUrlQuery> & {
+        store: Store<RootState, AnyAction>;
+      }
+    ) => {
+      try {
+        const user = await checkAuth(ctx);
+
+        if (!user) {
+          return {
+            props: {},
+            redirect: {
+              permanent: false,
+              destination: "/",
+            },
+          };
+        }
+
+        const rooms = await Api(ctx).getRooms();
+        ctx.store.dispatch(setRooms(rooms));
+
+        return {
+          props: {},
+        };
+      } catch (error) {
+        console.log("ERROR GETTING ROOMS!!!");
+        return {
+          props: {
+            rooms: [],
+          },
+        };
+      }
+    }
+  );

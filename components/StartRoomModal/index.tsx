@@ -2,10 +2,10 @@ import React from "react";
 import clsx from "clsx";
 import { useRouter } from "next/router";
 
-import { Room, RoomType } from "@/api/RoomApi";
-import { Button } from "@/components";
-import { fetchCreateRoom } from "@/redux/slices/roomsSlice";
-import { useAsyncAction } from "@/hooks/useAction";
+import { Room, RoomType } from "../../api/RoomApi";
+import { Button } from "../../components";
+import { fetchCreateRoom } from "../../redux/slices/roomsSlice";
+import { useAsyncAction } from "../../hooks/useAction";
 
 import styles from "./StartRoomModal.module.scss";
 
@@ -25,7 +25,7 @@ export const StartRoomModal: React.FC<StartRoomModalProps> = ({ onClose }) => {
         return alert("Вкажіть заголовок кімнати");
       }
       const data: Room = await createRoom({ title, type });
-      router.push(`/rooms/${data.id}`);
+      router.push(`/room/${data.id}`);
     } catch (error) {
       alert("Помилка під час створення кімнати");
     }

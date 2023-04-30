@@ -2,21 +2,17 @@ import React from 'react';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 
-import { WhiteBlock } from '../../WhiteBlock';
-import { Button } from '../../Button';
-import { StepInfo } from '../../StepInfo';
-import { MainContext } from '@/pages';
-import { Axios } from '@/core/axios';
+import { StepInfo, WhiteBlock } from '../../../components';
+import { MainContext } from '../../../pages';
+import { Axios } from '../../../core/axios';
 
 import styles from './EnterCodeStep.module.scss';
 
 export const EnterCodeStep: React.FC = () => {
   const router = useRouter();
-  //const { userData } = React.useContext(MainContext);
+  const { userData } = React.useContext(MainContext);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [codes, setCodes] = React.useState(['', '', '', '']);
-
-  // const nextDisabled = codes.some((e) => !e); //якщо якогось значення немає, то кнопка неактивна
 
   const handleChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const index = Number(event.target.getAttribute('id'));
@@ -36,8 +32,12 @@ export const EnterCodeStep: React.FC = () => {
   const onSubmit = async (code: string) => {
     try {
       setIsLoading(true);
-      await Axios.get(`/auth/sms/activate?code=${code}`);
+      await Axios.post(`/auth/sms/activate`, {
+        code,
+        user: userData,
+      });
       router.push('/rooms');
+
     } catch (error) {
       alert('Помилка активації!');
       setCodes(['', '', '', '']);

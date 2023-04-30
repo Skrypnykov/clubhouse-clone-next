@@ -1,9 +1,21 @@
-import React from 'react';
-import { useRouter } from 'next/router';
+import React from "react";
+import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
+import { useRouter } from "next/router";
+import { UserData } from "..";
+import { ParsedUrlQuery } from "node:querystring";
+import { AnyAction, Store } from "@reduxjs/toolkit";
+import { RootState } from "../../redux/types";
 
-import { Header, Profile } from '@/components';
+import { Header, Profile } from "../../components";
+import { checkAuth } from "../../utils/checkAuth";
+import { Api } from "../../api";
+import { wrapper } from "../../redux/store";
 
-export default function ProfilePage() {
+interface ProfilePageProps {
+  profileData: UserData | null;
+}
+
+const ProfilePage: NextPage<ProfilePageProps> = ({ profileData }) => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -12,12 +24,47 @@ export default function ProfilePage() {
       <Header />
       <div className="container mt-30">
         <Profile
-          avatarUrl="http://localhost:3000/static/avatar-so.jpg"
-          fullname="Skrypnykov Oleh"
-          username="skrypnykov"
-          about="front-end developer"
+          avatarUrl={profileData?.avatarUrl}
+          fullname={profileData?.fullname}
+          username={profileData?.username}
+          phone={profileData?.phone}
+          about={profileData?.about}
         />
       </div>
     </>
   );
-}
+};
+
+// запускається на стороні сервера
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    async (
+      ctx: GetServerSidePropsContext<ParsedUrlQuery> & {
+        store: Store<RootState, AnyAction>;
+      }
+    ) => {
+      try {
+        const user = await checkAuth(ctx);
+
+        const userId = ctx.query.id;
+        const profileData = await Api(ctx).getUserInfo(Number(userId));
+
+        if (!user || !profileData) {
+          throw new Error();
+        }
+
+        return {
+          props: {
+            profileData,
+          },
+        };
+      } catch (error) {
+        return {
+          props: {},
+          redirect: { permanent: false, destination: "/" },
+        };
+      }
+    }
+  );
+
+export default ProfilePage;

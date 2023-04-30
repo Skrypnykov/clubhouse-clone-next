@@ -1,8 +1,7 @@
 import React from 'react';
-import { WhiteBlock } from '../../WhiteBlock';
-import { Button } from '../../Button';
+import { WhiteBlock, Button } from '../../../components';
+import { MainContext } from '../../../pages';
 import styles from './WelcomeStep.module.scss';
-import { MainContext } from '@/pages';
 
 export const WelcomeStep: React.FC = () => {
   const { onNextStep } = React.useContext(MainContext)

@@ -9,9 +9,9 @@ export const rootReducer = combineReducers({
   user: userReducer,
 });
 
-export const makeStore = (): Store<RootState, AnyAction> =>
+const store = (): Store<RootState, AnyAction> =>
   configureStore({
     reducer: rootReducer,
   });
 
-export const wrapper = createWrapper(makeStore, { debug: true });
+export const wrapper = createWrapper(store, { debug: true });

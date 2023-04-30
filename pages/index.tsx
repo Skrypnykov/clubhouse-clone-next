@@ -1,5 +1,8 @@
 import React from "react";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { ParsedUrlQuery } from "node:querystring";
+import { AnyAction, Store } from "@reduxjs/toolkit";
+import { RootState } from "../redux/types";
 import { Axios } from "../core/axios";
 import { checkAuth } from "../utils/checkAuth";
 import { wrapper } from "../redux/store";
@@ -11,7 +14,7 @@ import {
   ChooseAvatarStep,
   EnterPhoneStep,
   EnterCodeStep,
-} from "@/components/steps";
+} from "../components/steps";
 
 const stepsComponents = {
   0: WelcomeStep,
@@ -29,6 +32,7 @@ export type UserData = {
   isActive: number;
   username: string;
   phone: string;
+  about: string;
   token?: string;
 };
 
@@ -44,9 +48,9 @@ export const MainContext = React.createContext<MainContextProps>(
   {} as MainContextProps
 );
 
-const getUserData = (): UserData | null => {
+export const getUserData = (): UserData | null => {
   try {
-    return JSON.parse(window.localStorage.getItem('userData'));
+    return JSON.parse(window.localStorage.getItem("userData"));
   } catch (error) {
     return null;
   }
@@ -54,7 +58,6 @@ const getUserData = (): UserData | null => {
 
 const getFormStep = (): number => {
   const json = getUserData();
-  console.log(json);
   if (json) {
     if (json.phone) {
       return 5;
@@ -74,7 +77,7 @@ export default function HomePage() {
     setStep((prev) => prev + 1);
   };
 
-  // змінює поле в input-e 
+  // змінює поле в input-e
   const setFieldValue = (field: string, value: string) => {
     setUserData((prev) => ({
       ...prev,
@@ -83,7 +86,7 @@ export default function HomePage() {
   };
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const json = getUserData();
       if (json) {
         setUserData(json);
@@ -94,8 +97,8 @@ export default function HomePage() {
 
   React.useEffect(() => {
     if (userData) {
-      window.localStorage.setItem('userData', JSON.stringify(userData));
-      Axios.defaults.headers.Authorization = 'Bearer ' + userData.token;
+      window.localStorage.setItem("userData", JSON.stringify(userData));
+      Axios.defaults.headers.Authorization = "Bearer " + userData.token;
     }
   }, [userData]);
 
@@ -110,7 +113,9 @@ export default function HomePage() {
           }
         `}
       </style>
-      <MainContext.Provider value={{ step, onNextStep, userData, setUserData, setFieldValue }}>
+      <MainContext.Provider
+        value={{ step, onNextStep, userData, setUserData, setFieldValue }}
+      >
         <Step />
       </MainContext.Provider>
     </main>
@@ -118,21 +123,27 @@ export default function HomePage() {
 }
 
 // запускається на стороні сервера
-export const getServerSideProps: GetServerSideProps = wrapper.getServerSideProps((store) => async (ctx) => {
-  try {
-    const user = await checkAuth(ctx);
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps(
+    async (
+      ctx: GetServerSidePropsContext<ParsedUrlQuery> & {
+        store: Store<RootState, AnyAction>;
+      }
+    ) => {
+      try {
+        const user = await checkAuth(ctx);
 
-    if (user) {
-      return {
-        props: {},
-        redirect: {
-          destination: '/rooms',
-          permanent: false,
-        },
-      };
+        if (user) {
+          return {
+            props: {},
+            redirect: {
+              destination: "/rooms",
+              permanent: false,
+            },
+          };
+        }
+      } catch (err) { }
+
+      return { props: {} };
     }
-    
-  } catch (err) { }
-
-  return { props: {} };
-});
+  );

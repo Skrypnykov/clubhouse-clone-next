@@ -19,13 +19,13 @@ export const RoomApi = (instance: AxiosInstance) => {
       return data;
     },
     getRoom: async (id: string): Promise<Room> => {
-      const { data } = await instance.get(`/rooms/${id}`);
+      const { data } = await instance.get(`/room/${id}`);
       return data;
     },
     createRoom: async (form: { title: string; type: RoomType }): Promise<Room> => {
       const { data } = await instance.post('/rooms', form);
       return data;
     },
-    deleteRoom: async (id: number): Promise<void> => instance.delete(`/rooms/${id}`),
+    deleteRoom: async (id: number): Promise<void> => instance.delete(`/room/${id}`),
   };
 };

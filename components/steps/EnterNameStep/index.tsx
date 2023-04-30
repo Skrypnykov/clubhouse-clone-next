@@ -5,7 +5,7 @@ import { Button } from '../../Button';
 import { StepInfo } from '../../StepInfo';
 
 import styles from './EnterNameStep.module.scss';
-import { MainContext } from '@/pages';
+import { MainContext } from '../../../pages';
 
 export const EnterNameStep: React.FC = () => {
   const { onNextStep, userData, setFieldValue } = React.useContext(MainContext);
