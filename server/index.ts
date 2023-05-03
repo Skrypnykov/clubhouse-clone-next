@@ -19,6 +19,10 @@ dotenv.config({
 
 import "./core/db";
 
+// server color log
+const color = require("colors");
+//color.enable()
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -26,6 +30,8 @@ const io = new Server(httpServer, {
     origin: "*",
   },
 });
+
+
 
 app.use(cors());
 app.use(express.json());
@@ -118,29 +124,33 @@ app.post("/upload", uploader.single("photo"), (req, res) => {
 export const rooms: SocketRoom = {};
 
 io.on("connection", (socket) => {
-  console.log("ПІДКЛЮЧИЛИСЯ ДО СОКЕТA:", socket.id);
+  console.log(color.yellow("ПІДКЛЮЧИЛИСЯ ДО СОКЕТA:", socket.id));
 
-  socket.on("CLIENT@ROOM:JOIN", ({ user, roomId }) => {
-    console.log("Користувач увійшов до кімнати!", roomId);
+  socket.on("CLIENT@ROOMS:JOIN", ({ user, roomId }) => {
     socket.join(`room/${roomId}`);
     rooms[socket.id] = { roomId, user };
-    socket.to(`room/${roomId}`).emit(
-      "SERVER@ROOM:JOIN",
-      Object.values(rooms)
-        .filter((obj) => obj.roomId === roomId)
-        .map((obj) => obj.user)
-    );
+    const speakers = getUsersFromRoom(rooms, roomId);
+    io.emit("SERVER@ROOMS:HOME", { roomId: Number(roomId), speakers });
+    io.in(`room/${roomId}`).emit("SERVER@ROOMS:JOIN", speakers);
+    Room.update({ speakers }, { where: { id: roomId } });
+
+    console.log(color.bgGreen(` ${user.fullname} ` + `увійшов до кімнати` + ` ${roomId} `));
   });
 
   socket.on("disconnect", () => {
     if (rooms[socket.id]) {
-      const { user, roomId } = rooms[socket.id];
-      socket.broadcast.to(`room/${roomId}`).emit("SERVER@ROOM:LEAVE", user);
+      const { roomId, user } = rooms[socket.id];
+      socket.broadcast.to(`room/${roomId}`).emit('SERVER@ROOMS:LEAVE', user);
       delete rooms[socket.id];
+      const speakers = getUsersFromRoom(rooms, roomId);
+      io.emit('SERVER@ROOMS:HOME', { roomId: Number(roomId), speakers });
+      Room.update({ speakers }, { where: { id: roomId } });
+
+      console.log(color.bgBlue(` ${user.fullname}` + ` вийшов із кімнати ` + `${roomId} `));
     }
   });
 });
 
 httpServer.listen(3001, () => {
-  console.log("SERVER RUNNED!");
+  console.log(color.green.bold("-= SERVER HAS STARTED! =-"));
 });

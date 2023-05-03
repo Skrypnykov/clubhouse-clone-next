@@ -3,10 +3,10 @@ import clsx from "clsx";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import { Socket, io } from "socket.io-client";
 
 import { Button, Speaker } from "../../components";
 import { UserData } from "../../pages";
+import { useSocket } from "../../hooks/useSocket";
 import { selectUserData } from "../../redux/selectors";
 
 import styles from "./Room.module.scss";
@@ -19,32 +19,31 @@ export const Room: React.FC<RoomProps> = ({ title }) => {
   const router = useRouter();
   const user = useSelector(selectUserData);
   const [users, setUsers] = React.useState<UserData[]>([]);
-
-  const socketRef = React.useRef<Socket>();
+  const roomId = router.query.id
+  const socket = useSocket();
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      socketRef.current = io("http://localhost:3001");
 
-      socketRef.current.emit("CLIENT@ROOM:JOIN", {
+      socket.emit("CLIENT@ROOMS:JOIN", {
         user,
-        roomId: router.query.id,
+        roomId,
       });
 
-      socketRef.current.on("SERVER@ROOM:LEAVE", (user: UserData) => {
+      socket.on("SERVER@ROOMS:LEAVE", (user: UserData) => {
         setUsers((prev) => prev.filter((obj) => obj.id !== user.id));
       });
 
-      socketRef.current.on("SERVER@ROOM:JOIN", (allUsers) => {
-        console.log('allUsers', allUsers);
+      socket.on("SERVER@ROOMS:JOIN", (allUsers: UserData[]) => {
         setUsers(allUsers);
+        //console.log('allUsers', allUsers);
       });
 
-      setUsers((prev) => [...prev, user]);
+      //setUsers((prev) => [...prev, user]);
     }
 
     return () => {
-      socketRef.current.disconnect();
+      socket.disconnect();
     };
   }, []);
 
@@ -72,7 +71,7 @@ export const Room: React.FC<RoomProps> = ({ title }) => {
 
       <div className={styles.users}>
         {users.map((obj) => (
-          <Speaker key={obj.fullname} {...obj} />
+          <Speaker key={obj.id} {...obj} />
         ))}
       </div>
     </div>

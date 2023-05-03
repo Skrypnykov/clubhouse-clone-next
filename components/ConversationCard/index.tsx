@@ -1,11 +1,10 @@
 import React from "react";
-import clsx from "clsx";
-
-import { Avatar } from "../../components";
-import { UserData } from "../../pages";
+import { Avatar } from "../Avatar";
 
 import styles from "./ConversationCard.module.scss";
 import whiteBlockStyles from "../WhiteBlock/WhiteBlock.module.scss";
+import clsx from "clsx";
+import { UserData } from "../../pages";
 
 interface ConversationCard {
   title: string;
@@ -15,11 +14,11 @@ interface ConversationCard {
 
 export const ConversationCard: React.FC<ConversationCard> = ({
   title,
-  speakers = [],
+  speakers,
   listenersCount,
 }) => {
   return (
-    <div className={clsx(whiteBlockStyles.block, styles.card)}>
+    <div className={clsx(whiteBlockStyles.block, styles.card, "mb-30")}>
       <h4 className={styles.title}>{title}</h4>
       <div className={clsx("d-flex mt-10", styles.content)}>
         <div className={styles.avatars}>

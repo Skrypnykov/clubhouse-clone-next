@@ -12,9 +12,9 @@ export type SpeakerProps = {
 export const Speaker: React.FC<SpeakerProps> = ({ id, fullname, avatarUrl }) => {
   return (
     <Link href={`/profile/${id}`}>
-      <span className="d-i-flex flex-column align-items-center mr-40 mb-40">
+      <span className="d-i-flex flex-column align-items-center">
         <Avatar src={avatarUrl} height="100px" width="100px" />
-        <div className="mt-10">
+        <div className="text-center mt-10">
           <b>{fullname}</b>
         </div>
       </span>

@@ -10,14 +10,5 @@ export const useSocket = () => {
     socketRef.current.connect();
   }
 
-  React.useEffect(() => {
-    return () => {
-      if (socketRef.current) {
-        console.log('disconnect!!!');
-        socketRef.current.disconnect();
-      }
-    };
-  }, []);
-
   return socketRef.current;
 };

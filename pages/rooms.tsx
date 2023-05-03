@@ -2,7 +2,7 @@ import React from "react";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { ParsedUrlQuery } from "node:querystring";
 import { AnyAction, Store } from "@reduxjs/toolkit";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 
 import {
@@ -16,12 +16,21 @@ import { checkAuth } from "../utils/checkAuth";
 import { Api } from "../api";
 import { wrapper } from "../redux/store";
 import { RootState } from "../redux/types";
-import { setRooms } from "../redux/slices/roomsSlice";
+import { setRoomSpeakers, setRooms } from "../redux/slices/roomsSlice";
 import { selectRooms } from "../redux/selectors";
+import { useSocket } from "../hooks/useSocket";
 
 const RoomsPage: NextPage = () => {
   const [visibleModal, setVisibleModal] = React.useState(false);
   const rooms = useSelector(selectRooms);
+  const dispatch = useDispatch();
+  const socket = useSocket();
+
+  React.useEffect(() => {
+    socket.on('SERVER@ROOMS:HOME', ({ roomId, speakers }) => {
+      dispatch(setRoomSpeakers({ speakers, roomId }));
+    });
+  }, []);
 
   return (
     <>

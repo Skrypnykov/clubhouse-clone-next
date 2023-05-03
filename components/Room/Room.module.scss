@@ -32,10 +32,11 @@
 }
 
 .users {
-  display: flex;
-  flex-direction: column;
-  //text-align: center;
-  margin-right: 50px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-auto-flow: column;
+  grid-gap: 5px;
+  justify-items: center;
 
   hr {
     width: 100%;
