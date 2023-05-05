@@ -37,7 +37,7 @@ const RoomsPage: NextPage = () => {
       <Header />
       <div className="container">
         <div className="mt-40 d-flex align-items-center justify-content-between">
-          <h1>All conversations</h1>
+          <h1 className="title">All conversations</h1>
           <Button
             className="pl-25"
             onClick={() => {

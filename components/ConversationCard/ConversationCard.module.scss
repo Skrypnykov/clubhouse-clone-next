@@ -12,7 +12,7 @@
   font-weight: bold;
   font-size: 22px;
   line-height: 30px;
-  width: 320px;
+  //width: 320px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -62,5 +62,11 @@
 
   li {
     margin-right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    width: 340px !important;
   }
 }

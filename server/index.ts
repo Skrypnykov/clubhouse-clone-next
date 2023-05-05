@@ -21,7 +21,6 @@ import "./core/db";
 
 // server color log
 const color = require("colors");
-//color.enable()
 
 const app = express();
 const httpServer = createServer(app);
@@ -30,8 +29,6 @@ const io = new Server(httpServer, {
     origin: "*",
   },
 });
-
-
 
 app.use(cors());
 app.use(express.json());
@@ -119,7 +116,7 @@ app.post("/upload", uploader.single("photo"), (req, res) => {
     });
 });
 
-// Конфигурація Sockets
+// Конфигурація socket.io
 
 export const rooms: SocketRoom = {};
 
@@ -134,19 +131,23 @@ io.on("connection", (socket) => {
     io.in(`room/${roomId}`).emit("SERVER@ROOMS:JOIN", speakers);
     Room.update({ speakers }, { where: { id: roomId } });
 
-    console.log(color.bgGreen(` ${user.fullname} ` + `увійшов до кімнати` + ` ${roomId} `));
+    console.log(
+      color.bgGreen(` ${user.fullname} ` + `увійшов до кімнати` + ` ${roomId} `)
+    );
   });
 
   socket.on("disconnect", () => {
     if (rooms[socket.id]) {
       const { roomId, user } = rooms[socket.id];
-      socket.broadcast.to(`room/${roomId}`).emit('SERVER@ROOMS:LEAVE', user);
+      socket.broadcast.to(`room/${roomId}`).emit("SERVER@ROOMS:LEAVE", user);
       delete rooms[socket.id];
       const speakers = getUsersFromRoom(rooms, roomId);
-      io.emit('SERVER@ROOMS:HOME', { roomId: Number(roomId), speakers });
+      io.emit("SERVER@ROOMS:HOME", { roomId: Number(roomId), speakers });
       Room.update({ speakers }, { where: { id: roomId } });
 
-      console.log(color.bgBlue(` ${user.fullname}` + ` вийшов із кімнати ` + `${roomId} `));
+      console.log(
+        color.bgBlue(` ${user.fullname}` + ` вийшов із кімнати ` + `${roomId} `)
+      );
     }
   });
 });

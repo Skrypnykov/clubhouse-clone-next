@@ -21,7 +21,7 @@ class AuthController {
   // перевірка, активація та видалення кода активації
   async activate(req: express.Request, res: express.Response) {
     const userId = req.user.id;
-    const {user, code} = req.body;
+    const { user, code } = req.body;
 
     if (!code) {
       return res.status(400).send({ message: "Введіть код активації" });

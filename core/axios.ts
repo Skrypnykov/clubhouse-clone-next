@@ -4,7 +4,7 @@ import { parseCookies } from 'nookies';
 const cookies = parseCookies();
 
 const Axios = axios.create({
-  baseURL: 'http://localhost:3001',
+  baseURL: 'http://192.168.18.100:3001',
   headers: {
     Authorization: 'Bearer ' + cookies?.token,
   },

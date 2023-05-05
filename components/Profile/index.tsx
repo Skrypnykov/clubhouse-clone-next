@@ -16,7 +16,7 @@ export const Profile: React.FC<ProfileProps> = (props) => {
   return (
     <>
       <BackButton title="Back" href="/rooms" />
-      <div className="d-flex align-items-center">
+      <div className={clsx(styles.profile,"d-flex align-items-center")}>
         <div className="d-flex align-items-center">
           <Avatar src={props.avatarUrl} width="100px" height="100px" />
           <div className="d-flex flex-column ml-30 mr-30">

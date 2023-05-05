@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import Peer from "simple-peer";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSelector } from "react-redux";
@@ -15,16 +16,17 @@ interface RoomProps {
   title: string;
 }
 
+let peers = [];
+
 export const Room: React.FC<RoomProps> = ({ title }) => {
   const router = useRouter();
   const user = useSelector(selectUserData);
   const [users, setUsers] = React.useState<UserData[]>([]);
-  const roomId = router.query.id
+  const roomId = router.query.id;
   const socket = useSocket();
 
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-
       socket.emit("CLIENT@ROOMS:JOIN", {
         user,
         roomId,
@@ -36,7 +38,6 @@ export const Room: React.FC<RoomProps> = ({ title }) => {
 
       socket.on("SERVER@ROOMS:JOIN", (allUsers: UserData[]) => {
         setUsers(allUsers);
-        //console.log('allUsers', allUsers);
       });
 
       //setUsers((prev) => [...prev, user]);
@@ -69,7 +70,7 @@ export const Room: React.FC<RoomProps> = ({ title }) => {
         </div>
       </div>
 
-      <div className={styles.users}>
+      <div className={styles.speakers}>
         {users.map((obj) => (
           <Speaker key={obj.id} {...obj} />
         ))}

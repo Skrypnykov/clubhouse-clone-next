@@ -82,3 +82,10 @@
 .roomTypeActive {
   background: #eff4fe;
 }
+
+@media (max-width: 480px) {
+  .modal {
+    width: 320px;
+    padding: 20px;
+  }
+}
