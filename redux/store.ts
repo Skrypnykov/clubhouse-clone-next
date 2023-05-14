@@ -14,4 +14,4 @@ const store = (): Store<RootState, AnyAction> =>
     reducer: rootReducer,
   });
 
-export const wrapper = createWrapper(store, { debug: true });
+export const wrapper = createWrapper(store, { debug: false });

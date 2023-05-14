@@ -25,26 +25,147 @@ export const Room: React.FC<RoomProps> = ({ title }) => {
   const roomId = router.query.id;
   const socket = useSocket();
 
+  const constraints = {
+    audio: true,
+  };
+
   React.useEffect(() => {
     if (typeof window !== "undefined") {
-      socket.emit("CLIENT@ROOMS:JOIN", {
-        user,
-        roomId,
-      });
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then((stream) => {
+          socket.emit("CLIENT@ROOMS:JOIN", {
+            user,
+            roomId,
+          });
 
-      socket.on("SERVER@ROOMS:LEAVE", (user: UserData) => {
-        setUsers((prev) => prev.filter((obj) => obj.id !== user.id));
-      });
+          socket.on("SERVER@ROOMS:JOIN", (allUsers: UserData[]) => {
+            //console.log("allUsers", allUsers);
 
-      socket.on("SERVER@ROOMS:JOIN", (allUsers: UserData[]) => {
-        setUsers(allUsers);
-      });
+            setUsers(allUsers);
 
-      //setUsers((prev) => [...prev, user]);
+            allUsers.forEach((speaker) => {
+              if (
+                user.id !== speaker.id &&
+                !peers.find((obj) => obj.id !== speaker.id)
+              ) {
+                const peerIncome = new Peer({
+                  initiator: true,
+                  trickle: false,
+                  stream,
+                });
+
+                // Отримали сигнал від ICE-сервера та просимо всіх учасників зателефонувати мені
+                peerIncome.on("signal", (signal) => {
+                  //console.log("peerIncome:", signal);
+                  console.log(
+                    "1. СИГНАЛ СТВОРЕНИЙ. ПРОСИМО КОРИСТУВАЧА " +
+                      speaker.fullname +
+                      " НАМ ЗАТЕЛЕФОНУВАТИ"
+                  );
+                  socket.emit("CLIENT@ROOMS:CALL", {
+                    targetUserId: speaker.id,
+                    callerUserId: user.id,
+                    roomId,
+                    signal,
+                  });
+                  peers.push({
+                    peer: peerIncome,
+                    id: speaker.id,
+                  });
+                  //console.log("PEERS", peers);
+                });
+
+                socket.on(
+                  "SERVER@ROOMS:CALL",
+                  ({ targetUserId, callerUserId, signal: callerSignal }) => {
+                    console.log(
+                      "2. КОРИСТУВАЧ " +
+                        callerUserId +
+                        " ПІДКЛЮЧИВСЯ, ТЕЛЕФОНУЄМО!"
+                    );
+
+                    const peerOutcome = new Peer({
+                      initiator: false,
+                      trickle: false,
+                      stream,
+                    });
+
+                    // Дзвонимо людині і чекаємо сигнал, який нам потрібно передати назад
+                    // користувачеві у відповідь
+                    peerOutcome.signal(callerSignal);
+
+                    peerOutcome
+                      // Отримуємо сигнал від ICE-сервера і відправляємо його користувачеві,
+                      // щоб він отримав наш сигнал для з'єднання
+                      .on("signal", (outSignal) => {
+                        console.log(
+                          "3. ОТРИМАЛИ НАШ СИГНАЛ, ВІДПРАВЛЯЄМО У ВІДПОВІДЬ КОРИСТУВАЧЕВІ " +
+                            callerUserId
+                        );
+                        socket.emit("CLIENT@ROOMS:ANSWER", {
+                          targetUserId: callerUserId,
+                          callerUserId: targetUserId,
+                          roomId,
+                          signal: outSignal,
+                        });
+                        //console.log("peerOutcome:", outSignal);
+                      })
+                      // Коли нам відповіли, відтворюємо звук
+                      .on("stream", (stream) => {
+                        document.querySelector("audio").srcObject = stream;
+                        document.querySelector("audio").play();
+                      });
+                  }
+                );
+
+                socket.on("SERVER@ROOMS:ANSWER", ({ callerUserId, signal }) => {
+                  const obj = peers.find(
+                    (obj) => Number(obj.id) === Number(callerUserId)
+                  );
+                  if (obj.peer) {
+                    obj.peer.signal(signal);
+                  }
+                  console.log("4. МИ ВІДПОВІЛИ КОРИСТУВАЧЕВІ: ", callerUserId);
+                });
+              }
+            });
+          });
+
+          socket.on("SERVER@ROOMS:LEAVE", (leaveUser: UserData) => {
+            console.log(leaveUser.id, peers);
+            setUsers((prev) =>
+              prev.filter((prevUser) => {
+                const peerUser = peers.find(
+                  (obj) => Number(obj.id) === Number(leaveUser.id)
+                );
+                if (peerUser) {
+                  peerUser.peer.on("close", () => {});
+                }
+                return prevUser.id !== leaveUser.id;
+              })
+            );
+          });
+        })
+        .catch(() => {
+          console.error("Немає доступу до мікрофона!");
+        });
+
+      return () => {
+        socket.disconnect();
+        //console.log("disconnect: ", socket);
+
+        peers.forEach((obj) => {
+          //obj.peer.destroy();
+          obj.peer.on("close", () => {});
+        });
+      };
     }
 
     return () => {
-      socket.disconnect();
+      peers.forEach((obj) => {
+        obj.peer.destroy();
+      });
     };
   }, []);
 
@@ -56,16 +177,18 @@ export const Room: React.FC<RoomProps> = ({ title }) => {
         <div
           className={clsx("d-flex align-items-center", styles.actionButtons)}
         >
-          <Link href="/rooms">
-            <Button color="gray" className={styles.leaveButton}>
-              <img
-                width={18}
-                height={18}
-                src="/static/peace.png"
-                alt="Hand black"
-              />
-              Leave quietly
-            </Button>
+          <Link href="/rooms" passHref>
+            <a>
+              <Button color="gray" className={styles.leaveButton}>
+                <img
+                  width={18}
+                  height={18}
+                  src="/static/peace.png"
+                  alt="Hand black"
+                />
+                Leave quietly
+              </Button>
+            </a>
           </Link>
         </div>
       </div>

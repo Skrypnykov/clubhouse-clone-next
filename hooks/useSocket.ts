@@ -6,10 +6,18 @@ export const useSocket = () => {
 
   if (!socketRef.current) {
     socketRef.current =
-      typeof window !== "undefined" && io("http://192.168.18.100:3001");
+      typeof window !== "undefined" && io("http://localhost:3001");
   } else {
     socketRef.current.connect();
   }
+
+  // React.useEffect(() => {
+  //   return () => {
+  //     if (socketRef.current) {
+  //       socketRef.current.disconnect();
+  //     }
+  //   };
+  // }, []);
 
   return socketRef.current;
 };

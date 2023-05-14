@@ -1,4 +1,4 @@
-import React from "react";
+import React, { RefAttributes } from "react";
 import { GetServerSideProps, GetServerSidePropsContext, NextPage } from "next";
 import { ParsedUrlQuery } from "node:querystring";
 import { AnyAction, Store } from "@reduxjs/toolkit";
@@ -27,7 +27,7 @@ const RoomsPage: NextPage = () => {
   const socket = useSocket();
 
   React.useEffect(() => {
-    socket.on('SERVER@ROOMS:HOME', ({ roomId, speakers }) => {
+    socket.on("SERVER@ROOMS:HOME", ({ roomId, speakers }) => {
       dispatch(setRoomSpeakers({ speakers, roomId }));
     });
   }, []);
@@ -57,12 +57,14 @@ const RoomsPage: NextPage = () => {
         )}
         <div className="grid mt-30 mb-40">
           {rooms.map((obj) => (
-            <Link key={obj.id} href={`/room/${obj.id}`}>
-              <ConversationCard
-                title={obj.title}
-                speakers={obj.speakers}
-                listenersCount={obj.listenersCount}
-              />
+            <Link key={obj.id} href={`/room/${obj.id}`} passHref>
+              <a className="d-flex">
+                <ConversationCard
+                  title={obj.title}
+                  speakers={obj.speakers}
+                  listenersCount={obj.listenersCount}
+                />
+              </a>
             </Link>
           ))}
         </div>

@@ -10,9 +10,9 @@ export const GitHubStep: React.FC = () => {
 
   const onClickAuth = () => {
     const win = window.open(
-      'http://192.168.18.100:3001/auth/github',
+      'http://localhost:3001/auth/github',
       'Auth',
-      'width=500,height=500,status=yes,toolbar=no,menubar=no,location=no'
+      'width=500,height=600,status=yes,toolbar=no,menubar=no,location=no'
     );
 
     const timer = setInterval(() => {

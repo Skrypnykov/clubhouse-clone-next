@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import sharp from "sharp";
 import fs from "fs";
-import { createServer } from "http";
-import { Server } from "socket.io";
+import socket from 'socket.io';
+import { createServer } from 'http';
 
 import { uploader } from "./core/uploader";
 import { passport } from "./core/passport";
@@ -19,12 +19,13 @@ dotenv.config({
 
 import "./core/db";
 
-// server color log
-const color = require("colors");
+const color = require("colors");  // colored logs
+
+const port = process.env.SERVER_PORT || 3001;
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
+const io = socket(httpServer, {
   cors: {
     origin: "*",
   },
@@ -57,11 +58,6 @@ app.delete(
 
 app.get(
   "/profile/:id",
-  passport.authenticate("jwt", { session: false }),
-  AuthController.getUserInfo
-);
-app.get(
-  "/user/:id",
   passport.authenticate("jwt", { session: false }),
   AuthController.getUserInfo
 );
@@ -117,11 +113,10 @@ app.post("/upload", uploader.single("photo"), (req, res) => {
 });
 
 // Конфигурація socket.io
-
 export const rooms: SocketRoom = {};
 
 io.on("connection", (socket) => {
-  console.log(color.yellow("ПІДКЛЮЧИЛИСЯ ДО СОКЕТA:", socket.id));
+  console.log(color.yellow("ПІДКЛЮЧЕННЯ ДО СОКЕТA:", socket.id));
 
   socket.on("CLIENT@ROOMS:JOIN", ({ user, roomId }) => {
     socket.join(`room/${roomId}`);
@@ -136,7 +131,30 @@ io.on("connection", (socket) => {
     );
   });
 
+  socket.on(
+    "CLIENT@ROOMS:CALL",
+    ({ targetUserId, callerUserId, roomId, signal }) => {
+      socket.broadcast.to(`room/${roomId}`).emit("SERVER@ROOMS:CALL", {
+        targetUserId,
+        callerUserId,
+        signal,
+      });
+    }
+  );
+
+  socket.on(
+    "CLIENT@ROOMS:ANSWER",
+    ({ targetUserId, callerUserId, roomId, signal }) => {
+      socket.broadcast.to(`room/${roomId}`).emit("SERVER@ROOMS:ANSWER", {
+        targetUserId,
+        callerUserId,
+        signal,
+      });
+    }
+  );
+
   socket.on("disconnect", () => {
+    //console.log('USERS:',  rooms);
     if (rooms[socket.id]) {
       const { roomId, user } = rooms[socket.id];
       socket.broadcast.to(`room/${roomId}`).emit("SERVER@ROOMS:LEAVE", user);
@@ -152,6 +170,8 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(3001, () => {
-  console.log(color.green.bold("-= SERVER HAS STARTED! =-"));
+httpServer.listen(port, () => {
+  console.log(
+    color.green.bold(`SERVER IS RUNNING at: http://localhost:${port}`)
+  );
 });

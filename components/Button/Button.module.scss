@@ -53,3 +53,11 @@
     background-color: darken(#f2f2f2, 2%);
   }
 }
+
+@media (max-width: 480px) {
+  .button {
+    padding-right: 15px;
+    padding-left: 10px !important;
+    font-size: 16px;
+  }
+}

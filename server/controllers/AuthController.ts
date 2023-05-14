@@ -1,5 +1,5 @@
 import express from "express";
-import { Axios } from "../../core/axios";
+import axios from 'axios';
 import { Code, User } from "../../models";
 
 import { generateRandomCode } from "../../utils/generateRandomCode";
@@ -53,7 +53,7 @@ class AuthController {
     }
   }
 
-  //
+  // отримання інформації про користувача
   async getUserInfo(req: express.Request, res: express.Response) {
     const userId = req.params.id;
 
@@ -89,8 +89,8 @@ class AuthController {
     }
 
     try {
-      // await Axios.get(
-      //     `https://api.turbosms.ua/message/send.json?recipients[0]=${phone}&sms[sender]=SOG&sms[text]=${smsCode}&token=${process.env.SMS_API_KEY}`
+      // await axios.get(
+      //   `https://api.turbosms.ua/message/send.json?recipients[0]=${phone}&sms[sender]=${process.env.SMS_API_SENDER}&sms[text]=${smsCode}&token=${process.env.SMS_API_KEY}`
       // );
 
       const findCode = await Code.findOne({

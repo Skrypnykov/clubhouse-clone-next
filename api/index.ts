@@ -11,7 +11,7 @@ export const Api = (ctx: GetServerSidePropsContext): ApiReturnType => {
   const token = cookies.token;
 
   const instance = axios.create({
-    baseURL: 'http://192.168.18.100:3001',
+    baseURL: 'http://localhost:3001',
     headers: {
       Authorization: 'Bearer ' + token,
     },
